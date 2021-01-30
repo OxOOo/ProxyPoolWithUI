@@ -20,20 +20,25 @@ def run():
     assert proxies[2].ip == '127.0.0.3'
     assert proxies[3].ip == '127.0.0.4'
 
-    p = conn.getToValidate(1)[0] # 设置一个通过验证
+    p = conn.getToValidate(1)[0] # 设置一个代理通过验证
     conn.pushValidateResult(p, True)
     assert len(conn.getToValidate(10)) == 3
-    p = conn.getToValidate(1)[0] # 设置一个没有通过验证
+    p = conn.getToValidate(1)[0] # 设置一个代理没有通过验证
     conn.pushValidateResult(p, False)
     assert len(conn.getToValidate(10)) == 2
     assert len(conn.getValidatedRandom(1)) == 1
     assert len(conn.getValidatedRandom(-1)) == 1
     p = conn.getValidatedRandom(1)[0]
     assert p.ip == '127.0.0.1'
-    p = conn.getToValidate(1)[0] # 设置一个通过验证
+    p = conn.getToValidate(1)[0] # 设置一个代理通过验证
     conn.pushValidateResult(p, True)
     assert len(conn.getValidatedRandom(1)) == 1
     assert len(conn.getValidatedRandom(-1)) == 2
+
+    proxies_status = conn.getProxiesStatus()
+    assert proxies_status['sum_proxies_cnt'] == 4
+    assert proxies_status['validated_proxies_cnt'] == 2
+    assert proxies_status['pending_proxies_cnt'] == 1
 
     fetchers = conn.getAllFetchers()
     for item in fetchers:
@@ -52,6 +57,14 @@ def run():
     assert f.sum_proxies_cnt == 30
     assert f.last_proxies_cnt == 20
     assert f.last_fetch_date is not None
+
+    conn.pushClearFetchersStatus()
+    f = conn.getFetcher('www.kuaidaili.com')
+    assert f is not None
+    # www.kuaidaili.com的参数应该被修改了
+    assert f.sum_proxies_cnt == 0
+    assert f.last_proxies_cnt == 0
+    assert f.last_fetch_date is None
 
 if __name__ == '__main__':
     print(u'请确保运行本脚本之前删除或备份`data.db`文件')

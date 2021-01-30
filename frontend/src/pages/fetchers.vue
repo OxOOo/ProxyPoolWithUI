@@ -122,6 +122,7 @@ export default {
         async clearStatus () {
             await this.$http.get('/clear_fetchers_status');
             this.$message.success('清空成功');
+            await this.update();
         },
         async enableChange (fetcher) {
             if (fetcher.enable) {

@@ -21,9 +21,9 @@ def main():
     主要逻辑：
     创建VALIDATE_THREAD_NUM个验证线程，这些线程会不断运行
     While True:
-        从数据库中获取当前待验证的代理，最多VALIDATE_THREAD_NUM个
+        检查验证线程是否返回了代理的验证结果
+        从数据库中获取若干当前待验证的代理
         将代理发送给前面创建的线程
-        回收验证线程返回的结果
     """
     logger = logging.getLogger('validator')
 

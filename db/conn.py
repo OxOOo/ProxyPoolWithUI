@@ -183,10 +183,10 @@ def getProxiesStatus():
 
 def pushClearFetchersStatus():
     """
-    清空爬取器的统计信息，包括sum_proxies_cnt,last_proxies_cnt
+    清空爬取器的统计信息，包括sum_proxies_cnt,last_proxies_cnt,last_fetch_date
     """
     c = conn.cursor()
     c.execute('BEGIN EXCLUSIVE TRANSACTION;')
-    c.execute('UPDATE fetchers SET sum_proxies_cnt=?, last_proxies_cnt=?', (0,0))
+    c.execute('UPDATE fetchers SET sum_proxies_cnt=?, last_proxies_cnt=?, last_fetch_date=?', (0, 0, None))
     c.close()
     conn.commit()
