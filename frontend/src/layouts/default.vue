@@ -16,6 +16,12 @@
                             <span>爬取器状态</span>
                         </NuxtLink>
                     </a-menu-item>
+                    <a-menu-item key="github">
+                        <a href="https://github.com/believedotchenyu/ProxyPoolWithUI" target="_blank">
+                            <a-icon type="github" />
+                            <span>Github主页</span>
+                        </a>
+                    </a-menu-item>
                 </a-menu>
             </a-layout-sider>
             <a-layout>
