@@ -34,13 +34,28 @@ class Proxy(object):
     
     def params(self):
         """
-        返回一个元组，包含自身的全部属性，
+        返回一个元组，包含自身的全部属性
         """
         return (
             self.fetcher_name,
             self.protocal, self.ip, self.port,
             self.validated, self.validate_date, self.to_validate_date, self.validate_failed_cnt
         )
+    
+    def to_dict(self):
+        """
+        返回一个dict，包含自身的全部属性
+        """
+        return {
+            'fetcher_name': self.fetcher_name,
+            'protocal': self.protocal,
+            'ip': self.ip,
+            'port': self.port,
+            'validated': self.validated,
+            'validate_date': self.validate_date,
+            'to_validate_date': self.to_validate_date,
+            'validate_failed_cnt': self.validate_failed_cnt
+        }
     
     @staticmethod
     def decode(row):

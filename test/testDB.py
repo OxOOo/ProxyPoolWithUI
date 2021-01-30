@@ -20,12 +20,20 @@ def run():
     assert proxies[2].ip == '127.0.0.3'
     assert proxies[3].ip == '127.0.0.4'
 
-    p = conn.getToValidate(1)[0]
+    p = conn.getToValidate(1)[0] # 设置一个通过验证
     conn.pushValidateResult(p, True)
     assert len(conn.getToValidate(10)) == 3
-    p = conn.getToValidate(1)[0]
+    p = conn.getToValidate(1)[0] # 设置一个没有通过验证
     conn.pushValidateResult(p, False)
     assert len(conn.getToValidate(10)) == 2
+    assert len(conn.getValidatedRandom(1)) == 1
+    assert len(conn.getValidatedRandom(-1)) == 1
+    p = conn.getValidatedRandom(1)[0]
+    assert p.ip == '127.0.0.1'
+    p = conn.getToValidate(1)[0] # 设置一个通过验证
+    conn.pushValidateResult(p, True)
+    assert len(conn.getValidatedRandom(1)) == 1
+    assert len(conn.getValidatedRandom(-1)) == 2
 
     fetchers = conn.getAllFetchers()
     for item in fetchers:

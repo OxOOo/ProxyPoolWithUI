@@ -5,11 +5,15 @@ sys.path.append(os.path.dirname(__file__) + os.sep + '../')
 from multiprocessing import Process
 import time
 from proc import run_fetcher, run_validator
+from api import api
+from frontend import serve
 
 def main():
     processes = []
     processes.append(Process(target=run_fetcher.main, name='fetcher'))
     processes.append(Process(target=run_validator.main, name='validator'))
+    processes.append(Process(target=api.main, name='api'))
+    processes.append(Process(target=serve.main, name='web'))
 
     for p in processes:
         p.start()

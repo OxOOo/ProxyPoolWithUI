@@ -28,12 +28,24 @@ class Fetcher(object):
     
     def params(self):
         """
-        返回一个元组，包含自身的全部属性，
+        返回一个元组，包含自身的全部属性
         """
         return (
             self.name, self.enable,
             self.sum_proxies_cnt, self.last_proxies_cnt, self.last_fetch_date
         )
+    
+    def to_dict(self):
+        """
+        返回一个dict，包含自身的全部属性
+        """
+        return {
+            'name': self.name,
+            'enable': self.enable,
+            'sum_proxies_cnt': self.sum_proxies_cnt,
+            'last_proxies_cnt': self.last_proxies_cnt,
+            'last_fetch_date': self.last_fetch_date
+        }
     
     @staticmethod
     def decode(row):

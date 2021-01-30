@@ -76,6 +76,19 @@ def pushValidateResult(proxy, success):
     ))
     conn.commit()
 
+def getValidatedRandom(max_count):
+    """
+    从通过了验证的代理中，随机选择max_count个代理返回
+    max_count<=0表示不做数量限制
+    返回 : list[Proxy]
+    """
+    if max_count > 0:
+        r = conn.execute('SELECT * FROM proxies WHERE validated=? ORDER BY RANDOM() LIMIT ?', (True, max_count))
+    else:
+        r = conn.execute('SELECT * FROM proxies WHERE validated=? ORDER BY RANDOM()', (True,))
+    proxies = [Proxy.decode(row) for row in r]
+    return proxies
+
 def pushFetcherResult(name, proxies_cnt):
     """
     更新爬取器的状态，每次在完成一个网站的爬取之后，调用本函数
@@ -107,8 +120,6 @@ def pushFetcherEnable(name, enable):
     name : 爬取器的名称
     enable : True/False, 是否启用
     """
-    time.sleep(0.1) # 为了解决并发读写饿死的问题
-
     c = conn.cursor()
     c.execute('BEGIN EXCLUSIVE TRANSACTION;')
     c.execute('SELECT * FROM fetchers WHERE name=?', (name,))
@@ -146,3 +157,36 @@ def getFetcher(name):
         return None
     else:
         return Fetcher.decode(row)
+
+def getProxiesStatus():
+    """
+    获取代理状态，包括`全部代理数量`，`当前可用代理数量`，`等待验证代理数量`
+    返回 : dict
+    """
+    r = conn.execute('SELECT count(*) FROM proxies')
+    sum_proxies_cnt = r.fetchone()[0]
+    r.close()
+
+    r = conn.execute('SELECT count(*) FROM proxies WHERE validated=?', (True,))
+    validated_proxies_cnt = r.fetchone()[0]
+    r.close()
+
+    r = conn.execute('SELECT count(*) FROM proxies WHERE to_validate_date<=?', (datetime.datetime.now(),))
+    pending_proxies_cnt = r.fetchone()[0]
+    r.close()
+
+    return dict(
+        sum_proxies_cnt=sum_proxies_cnt,
+        validated_proxies_cnt=validated_proxies_cnt,
+        pending_proxies_cnt=pending_proxies_cnt
+    )
+
+def pushClearFetchersStatus():
+    """
+    清空爬取器的统计信息，包括sum_proxies_cnt,last_proxies_cnt
+    """
+    c = conn.cursor()
+    c.execute('BEGIN EXCLUSIVE TRANSACTION;')
+    c.execute('UPDATE fetchers SET sum_proxies_cnt=?, last_proxies_cnt=?', (0,0))
+    c.close()
+    conn.commit()
