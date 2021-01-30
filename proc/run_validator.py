@@ -1,6 +1,6 @@
 # encoding: utf-8
 """
-定时运行验证器
+验证器逻辑
 """
 
 import sys
@@ -17,11 +17,13 @@ logging.basicConfig(stream=sys.stdout, format="%(asctime)s-%(levelname)s:%(name)
 
 def main():
     """
-    定时运行验证器
+    验证器
     主要逻辑：
+    创建VALIDATE_THREAD_NUM个验证线程，这些线程会不断运行
     While True:
         从数据库中获取当前待验证的代理，最多VALIDATE_THREAD_NUM个
-        对每个代理启动一个线程进行验证
+        将代理发送给前面创建的线程
+        回收验证线程返回的结果
     """
     logger = logging.getLogger('validator')
 
