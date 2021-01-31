@@ -11,7 +11,8 @@ import logging
 import time
 import requests
 from db import conn
-from config import PROC_VALIDATOR_SLEEP, VALIDATE_THREAD_NUM, VALIDATE_URL, VALIDATE_TIMEOUT, VALIDATE_MAX_FAILS
+from config import PROC_VALIDATOR_SLEEP, VALIDATE_THREAD_NUM
+from config import VALIDATE_TEXT, VALIDATE_URL, VALIDATE_TIMEOUT, VALIDATE_MAX_FAILS
 
 logging.basicConfig(stream=sys.stdout, format="%(asctime)s-%(levelname)s:%(name)s:%(message)s", level='INFO')
 
@@ -80,7 +81,7 @@ def validate_thread(in_que, out_que):
                 }
                 r = requests.get(VALIDATE_URL, timeout=VALIDATE_TIMEOUT, proxies=proxies)
                 html = r.text
-                if '百度一下，你就知道' in html:
+                if VALIDATE_TEXT in html:
                     success = True
                     break
             except Exception as e:
