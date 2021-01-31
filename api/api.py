@@ -124,7 +124,7 @@ def after_request(resp):
 app.after_request(after_request)
 
 def main():
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000, threaded=False)
 
 if __name__ == '__main__':
     main()
