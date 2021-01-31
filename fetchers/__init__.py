@@ -9,6 +9,7 @@ from .IP66Fetcher import IP66Fetcher
 from .IP3366Fetcher import IP3366Fetcher
 from .JiangxianliFetcher import JiangxianliFetcher
 from .IHuanFetcher import IHuanFetcher
+from .IP89Fetcher import IP89Fetcher
 
 fetchers = [
     Fetcher(name='www.kuaidaili.com', fetcher=KuaidailiFetcher),
@@ -17,4 +18,5 @@ fetchers = [
     Fetcher(name='www.ip3366.net', fetcher=IP3366Fetcher),
     Fetcher(name='ip.jiangxianli.com', fetcher=JiangxianliFetcher),
     Fetcher(name='ip.ihuan.me', fetcher=IHuanFetcher),
+    Fetcher(name='www.89ip.cn', fetcher=IP89Fetcher),
 ]
