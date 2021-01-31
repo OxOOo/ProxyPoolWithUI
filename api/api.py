@@ -61,6 +61,7 @@ def fetchers_status():
 
     for f in fetchers:
         f['validated_cnt'] = len([_ for _ in proxies if _.fetcher_name == f['name']])
+        f['in_db_cnt'] = conn.getProxyCount(f['name'])
     
     return jsonify(dict(
         success=True,

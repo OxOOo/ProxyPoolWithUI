@@ -158,6 +158,17 @@ def getFetcher(name):
     else:
         return Fetcher.decode(row)
 
+def getProxyCount(fetcher_name):
+    """
+    查询在数据库中有多少个由指定爬取器爬取到的代理
+    fetcher_name : 爬取器名称
+    返回 : int
+    """
+    r = conn.execute('SELECT count(*) FROM proxies WHERE fetcher_name=?', (fetcher_name,))
+    cnt = r.fetchone()[0]
+    r.close()
+    return cnt
+
 def getProxiesStatus():
     """
     获取代理状态，包括`全部代理数量`，`当前可用代理数量`，`等待验证代理数量`

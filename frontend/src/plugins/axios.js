@@ -12,6 +12,7 @@ const instance = axios.create({
 function showModel (type, title, content) {
     return new Promise((resolve) => {
         setTimeout(() => {
+            Modal.destroyAll();
             Modal[type]({
                 title,
                 content,

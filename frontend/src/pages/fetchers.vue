@@ -31,6 +31,18 @@
             :pagination="false"
             :bordered="true"
         >
+            <span slot="inDbCntTitle">
+                数据库中的代理数量
+                <a-tooltip>
+                    <template #title>
+                        <span>
+                            当前数据库中，有多少代理是这个爬取器爬到的。
+                            和`总共爬取代理数量`不同的地方在于，这个是去重之后的结果。
+                        </span>
+                    </template>
+                    <a-icon type="question-circle" />
+                </a-tooltip>
+            </span>
             <span slot="enableTitle">
                 是否启用
                 <a-tooltip>
@@ -60,6 +72,10 @@ const columns = [
     {
         title: '当前可用代理数量',
         dataIndex: 'validated_cnt'
+    },
+    {
+        dataIndex: 'in_db_cnt',
+        slots: { title: 'inDbCntTitle' }
     },
     {
         title: '总共爬取代理数量',

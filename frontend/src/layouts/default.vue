@@ -1,46 +1,54 @@
 <template>
     <div>
-        <a-layout class="layout-main">
-            <a-layout-sider collapsible>
-                <div class="logo" />
-                <a-menu v-model="url_path" theme="dark" mode="inline">
-                    <a-menu-item key="/">
-                        <NuxtLink to="/">
-                            <a-icon type="home" />
-                            <span>可用代理</span>
-                        </NuxtLink>
-                    </a-menu-item>
-                    <a-menu-item key="/fetchers">
-                        <NuxtLink to="/fetchers">
-                            <a-icon type="retweet" />
-                            <span>爬取器状态</span>
-                        </NuxtLink>
-                    </a-menu-item>
-                    <a-menu-item key="github">
-                        <a href="https://github.com/believedotchenyu/ProxyPoolWithUI" target="_blank">
-                            <a-icon type="github" />
-                            <span>Github主页</span>
-                        </a>
-                    </a-menu-item>
-                </a-menu>
-            </a-layout-sider>
-            <a-layout>
-                <a-layout-header style="background: #fff; padding: 0">
-                </a-layout-header>
-                <a-layout-content
-                    :style="{ margin: '24px 16px', padding: '24px', background: '#fff' }"
-                >
-                    <Nuxt />
-                </a-layout-content>
+        <a-config-provider :locale="locale">
+            <a-layout class="layout-main">
+                <a-layout-sider collapsible>
+                    <div class="logo" />
+                    <a-menu v-model="url_path" theme="dark" mode="inline">
+                        <a-menu-item key="/">
+                            <NuxtLink to="/">
+                                <a-icon type="home" />
+                                <span>可用代理</span>
+                            </NuxtLink>
+                        </a-menu-item>
+                        <a-menu-item key="/fetchers">
+                            <NuxtLink to="/fetchers">
+                                <a-icon type="retweet" />
+                                <span>爬取器状态</span>
+                            </NuxtLink>
+                        </a-menu-item>
+                        <a-menu-item key="github">
+                            <a href="https://github.com/believedotchenyu/ProxyPoolWithUI" target="_blank">
+                                <a-icon type="github" />
+                                <span>Github主页</span>
+                            </a>
+                        </a-menu-item>
+                    </a-menu>
+                </a-layout-sider>
+                <a-layout>
+                    <a-layout-header style="background: #fff; padding: 0">
+                    </a-layout-header>
+                    <a-layout-content
+                        :style="{ margin: '24px 16px', padding: '24px', background: '#fff' }"
+                    >
+                        <Nuxt />
+                    </a-layout-content>
+                </a-layout>
             </a-layout>
-        </a-layout>
+        </a-config-provider>
     </div>
 </template>
 
 <script>
+import zh_CN from 'ant-design-vue/lib/locale-provider/zh_CN';
+import moment from 'moment';
+
+moment.locale('zh-cn');
+
 export default {
     data () {
         return {
+            locale: zh_CN,
             url_path: []
         };
     },
