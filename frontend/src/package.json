@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "nuxt",
-    "generate": "nuxt generate",
+    "generate": "NODE_ENV=production nuxt generate",
     "lint:js": "eslint --ext \".js,.vue\" --ignore-path .gitignore --fix .",
     "lint": "npm run lint:js"
   },

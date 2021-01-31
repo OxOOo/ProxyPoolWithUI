@@ -42,5 +42,14 @@ export default {
     modules: [],
 
     // Build Configuration: https://go.nuxtjs.dev/config-build
-    build: {}
+    build: {},
+
+    router: {
+        base: '/web/'
+    },
+
+    env: {
+        AXIOS_BASE_URL: // 浏览器访问后端的地址
+            process.env.NODE_ENV === 'production' ? '/' : 'http://localhost:5000'
+    }
 };

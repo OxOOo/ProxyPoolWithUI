@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Modal } from 'ant-design-vue';
 
-const baseURL = 'http://localhost:5000';
+const baseURL = process.env.AXIOS_BASE_URL;
 
 const instance = axios.create({
     baseURL,

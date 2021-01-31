@@ -1,20 +1,28 @@
 # encoding: utf-8
 
+import os
 from flask import Flask
-from flask import jsonify
-from flask import request
+from flask import jsonify, request, redirect, send_from_directory
 
 try:
     from db import conn
 except:
-    import sys, os
+    import sys
     sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
     from db import conn
 
-app = Flask(__name__)
+STATIC_FOLDER = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'frontend', 'deployment')
+
+app = Flask(
+    __name__,
+    static_url_path='/web',
+    static_folder=STATIC_FOLDER
+)
+
+############# 以下API可用于获取代理 ################
 
 # 可用于测试API状态
-@app.route('/', methods=['GET'])
+@app.route('/ping', methods=['GET'])
 def ping():
     return 'API OK'
 
@@ -36,6 +44,22 @@ def fetch_all():
     return ','.join(proxies)
 
 ############# 以下API主要给网页使用 ################
+
+@app.route('/')
+def index():
+    return redirect('/web')
+
+# 网页：首页
+@app.route('/web', methods=['GET'])
+@app.route('/web/', methods=['GET'])
+def page_index():
+    return send_from_directory(STATIC_FOLDER, 'index.html')
+
+# 网页：爬取器状态
+@app.route('/web/fetchers', methods=['GET'])
+@app.route('/web/fetchers/', methods=['GET'])
+def page_fetchers():
+    return send_from_directory(STATIC_FOLDER, 'fetchers/index.html')
 
 # 获取代理状态
 @app.route('/proxies_status', methods=['GET'])
@@ -85,14 +109,16 @@ def fetcher_enable():
         conn.pushFetcherEnable(name, False)
     return jsonify(dict(success=True))
 
+############# 其他 ################
 
-# 跨域支持
+# 跨域支持，主要是在开发网页端的时候需要使用
 def after_request(resp):
     ALLOWED_ORIGIN = ['0.0.0.0', '127.0.0.1', 'localhost']
-    if request.headers['origin']:
+    origin = request.headers.get('origin', None)
+    if origin is not None:
         for item in ALLOWED_ORIGIN:
-            if item in request.headers['origin']:
-                resp.headers['Access-Control-Allow-Origin'] = request.headers['origin']
+            if item in origin:
+                resp.headers['Access-Control-Allow-Origin'] = origin
                 resp.headers['Access-Control-Allow-Credentials'] = 'true'
     return resp
 app.after_request(after_request)
