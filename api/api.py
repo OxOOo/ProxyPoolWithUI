@@ -124,6 +124,7 @@ def after_request(resp):
 app.after_request(after_request)
 
 def main():
+    # 因为默认sqlite3中，同一个数据库连接不能在多线程环境下使用，所以这里需要禁用flask的多线程
     app.run(host='0.0.0.0', port=5000, threaded=False)
 
 if __name__ == '__main__':
