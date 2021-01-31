@@ -44,7 +44,7 @@ class Fetcher(object):
             'enable': self.enable,
             'sum_proxies_cnt': self.sum_proxies_cnt,
             'last_proxies_cnt': self.last_proxies_cnt,
-            'last_fetch_date': self.last_fetch_date
+            'last_fetch_date': str(self.last_fetch_date)
         }
     
     @staticmethod

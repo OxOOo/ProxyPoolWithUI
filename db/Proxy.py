@@ -52,8 +52,8 @@ class Proxy(object):
             'ip': self.ip,
             'port': self.port,
             'validated': self.validated,
-            'validate_date': self.validate_date,
-            'to_validate_date': self.to_validate_date,
+            'validate_date': str(self.validate_date),
+            'to_validate_date': str(self.to_validate_date),
             'validate_failed_cnt': self.validate_failed_cnt
         }
     

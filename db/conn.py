@@ -33,10 +33,12 @@ def pushNewFetch(fetcher_name, protocal, ip, port):
     c.execute('BEGIN EXCLUSIVE TRANSACTION;')
     # 更新proxies表
     c.execute('SELECT * FROM proxies WHERE protocal=? AND ip=? AND port=?', (p.protocal, p.ip, p.port))
-    if c.fetchone() is not None: # 已经存在(protocal, ip, port)
+    row = c.fetchone()
+    if row is not None: # 已经存在(protocal, ip, port)
+        old_p = Proxy.decode(row)
         c.execute("""
             UPDATE proxies SET fetcher_name=?,to_validate_date=? WHERE protocal=? AND ip=? AND port=?
-        """, (p.fetcher_name, p.to_validate_date, p.protocal, p.ip, p.port))
+        """, (p.fetcher_name, min(p.to_validate_date, old_p.to_validate_date), p.protocal, p.ip, p.port))
     else:
         c.execute('INSERT INTO proxies VALUES (?,?,?,?,?,?,?,?)', p.params())
     c.close()
