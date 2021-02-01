@@ -8,6 +8,9 @@ from proc import run_fetcher, run_validator
 from api import api
 
 def main():
+    if len(sys.argv) >= 2 and sys.argv[1] == 'test':
+        return
+
     processes = []
     processes.append(Process(target=run_fetcher.main, name='fetcher'))
     processes.append(Process(target=run_validator.main, name='validator'))

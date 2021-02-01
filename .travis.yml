@@ -1,0 +1,11 @@
+language: python
+python:
+  - "3.6"
+  - "3.7"
+  - "3.8"
+os:
+  - linux
+install:
+  - pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.txt
+
+script: python main.py test
