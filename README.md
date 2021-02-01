@@ -1,4 +1,4 @@
-# 简易好用的代理池
+# 简易好用的免费代理池
 
 * 定时自动爬取网络上的免费代理
 * 定时对代理进行验证，集成API随时返回可用代理
@@ -80,6 +80,7 @@ def main():
     if len(proxy_uri) == 0:
         print(u'暂时没有可用代理')
         return
+    print(u'获取到的代理是：' + proxy_uri)
     
     proxies = { 'http': proxy_uri }
     html = requests.get('http://www.baidu.com', proxies=proxies)
@@ -102,4 +103,18 @@ if __name__ == '__main__':
 
 本项目的爬取器均在`fetchers`目录下，你也可以根据自己的需求对其中的爬取器进行修改或者扩展。
 
-对本项目扩展爬取器并不复杂，详细的操作步骤可见[此处](fetchers/)，可以参考`fetchers`目录下已有的爬取器。
+编写本项目的爬取器并不复杂，详细的操作步骤可见[此处](fetchers/)，可以参考`fetchers`目录下已有的爬取器。
+
+## 项目工作流程图
+
+本项目主要包含三部分：
+
+1. 爬取进程：主要包括`fetchers`目录和`proc/run_fetcher.py`文件
+2. 验证进程：主要在`proc/run_validator.py`文件中
+3. WEB与API：在`api`目录下
+
+本项目的大致逻辑图如下：
+
+注：为了便于理解与画图，下图的逻辑是经过简化之后的逻辑，详细过程可查看代码以及相应的注释。
+
+![workflow](docs/workflow.png)
