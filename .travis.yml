@@ -5,6 +5,7 @@ python:
   - "3.8"
 os:
   - linux
+  - osx
 install:
   - pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.txt
 

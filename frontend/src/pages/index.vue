@@ -11,7 +11,7 @@
                         <template #title>
                             <span>
                                 全部代理数量
-                                <a-tooltip title="到现在为止爬取到的不同代理总数，包含没有通过验证的代理">
+                                <a-tooltip title="目前数据库中的代理总数，包含没有通过验证的代理">
                                     <a-icon type="question-circle" />
                                 </a-tooltip>
                             </span>
