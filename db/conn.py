@@ -38,7 +38,7 @@ def pushNewFetch(fetcher_name, protocal, ip, port):
         old_p = Proxy.decode(row)
         c.execute("""
             UPDATE proxies SET fetcher_name=?,to_validate_date=? WHERE protocal=? AND ip=? AND port=?
-        """, (p.fetcher_name, min(p.to_validate_date, old_p.to_validate_date), p.protocal, p.ip, p.port))
+        """, (p.fetcher_name, min(datetime.datetime.now(), old_p.to_validate_date), p.protocal, p.ip, p.port))
     else:
         c.execute('INSERT INTO proxies VALUES (?,?,?,?,?,?,?,?)', p.params())
     c.close()
@@ -47,15 +47,26 @@ def pushNewFetch(fetcher_name, protocal, ip, port):
 def getToValidate(max_count=1):
     """
     从数据库中获取待验证的代理，根据to_validate_date字段
+    优先选取已经通过了验证的代理，其次是没有通过验证的代理
     max_count : 返回数量限制
     返回 : list[Proxy]
     """
-    r = conn.execute('SELECT * FROM proxies WHERE to_validate_date<=? ORDER BY to_validate_date LIMIT ?', (
+    c = conn.cursor()
+    c.execute('BEGIN EXCLUSIVE TRANSACTION;')
+    c.execute('SELECT * FROM proxies WHERE to_validate_date<=? AND validated=? ORDER BY to_validate_date LIMIT ?', (
         datetime.datetime.now(),
+        True,
         max_count
     ))
-    proxies = [Proxy.decode(row) for row in r]
-    r.close()
+    proxies = [Proxy.decode(row) for row in c]
+    c.execute('SELECT * FROM proxies WHERE to_validate_date<=? AND validated=? ORDER BY to_validate_date LIMIT ?', (
+        datetime.datetime.now(),
+        False,
+        max_count - len(proxies)
+    ))
+    proxies = proxies + [Proxy.decode(row) for row in c]
+    c.close()
+    conn.commit()
     return proxies
 
 def pushValidateResult(proxy, success):
@@ -67,15 +78,18 @@ def pushValidateResult(proxy, success):
     time.sleep(0.1) # 为了解决并发读写饿死的问题
 
     p = proxy
-    p.validate(success)
-    conn.execute("""
-        UPDATE proxies
-        SET fetcher_name=?,validated=?,validate_date=?,to_validate_date=?,validate_failed_cnt=?
-        WHERE protocal=? AND ip=? AND port=?
-    """, (
-        p.fetcher_name, p.validated, p.validate_date, p.to_validate_date, p.validate_failed_cnt,
-        p.protocal, p.ip, p.port
-    ))
+    should_remove = p.validate(success)
+    if should_remove:
+        conn.execute('DELETE FROM proxies WHERE protocal=? AND ip=? AND port=?', (p.protocal, p.ip, p.port))
+    else:
+        conn.execute("""
+            UPDATE proxies
+            SET fetcher_name=?,validated=?,validate_date=?,to_validate_date=?,validate_failed_cnt=?
+            WHERE protocal=? AND ip=? AND port=?
+        """, (
+            p.fetcher_name, p.validated, p.validate_date, p.to_validate_date, p.validate_failed_cnt,
+            p.protocal, p.ip, p.port
+        ))
     conn.commit()
 
 def getValidatedRandom(max_count):

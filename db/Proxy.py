@@ -52,8 +52,8 @@ class Proxy(object):
             'ip': self.ip,
             'port': self.port,
             'validated': self.validated,
-            'validate_date': str(self.validate_date),
-            'to_validate_date': str(self.to_validate_date),
+            'validate_date': str(self.validate_date) if self.validate_date is not None else None,
+            'to_validate_date': str(self.to_validate_date) if self.to_validate_date is not None else None,
             'validate_failed_cnt': self.validate_failed_cnt
         }
     
@@ -77,19 +77,26 @@ class Proxy(object):
     
     def validate(self, success):
         """
-        传入一次验证结果，根据验证结果调整自身属性
+        传入一次验证结果，根据验证结果调整自身属性，并返回是否删除这个代理
         success : True/False，表示本次验证是否成功
+        返回 : True/False，True表示这个代理太差了，应该从数据库中删除
         """
         if success: # 验证成功
             self.validated = True
             self.validate_date = datetime.datetime.now()
             self.validate_failed_cnt = 0
             self.to_validate_date = datetime.datetime.now() + datetime.timedelta(minutes=5) # 5分钟之后继续验证
+            return False
         else:
             self.validated = False
             self.validate_date = datetime.datetime.now()
             self.validate_failed_cnt = self.validate_failed_cnt + 1
 
-            # 验证失败的次数越多，距离下次验证的时间越长，最长不超过30分钟
-            delay_minutes = min(self.validate_failed_cnt * 5, 30)
+            # 验证失败的次数越多，距离下次验证的时间越长
+            delay_minutes = self.validate_failed_cnt * 5
             self.to_validate_date = datetime.datetime.now() + datetime.timedelta(minutes=delay_minutes)
+
+            if self.validate_failed_cnt >= 3:
+                return True
+            else:
+                return False

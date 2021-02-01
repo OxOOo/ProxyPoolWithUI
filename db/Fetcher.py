@@ -44,7 +44,7 @@ class Fetcher(object):
             'enable': self.enable,
             'sum_proxies_cnt': self.sum_proxies_cnt,
             'last_proxies_cnt': self.last_proxies_cnt,
-            'last_fetch_date': str(self.last_fetch_date)
+            'last_fetch_date': str(self.last_fetch_date) if self.last_fetch_date is not None else None
         }
     
     @staticmethod
