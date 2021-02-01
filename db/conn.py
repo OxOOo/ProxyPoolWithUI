@@ -103,6 +103,7 @@ def getValidatedRandom(max_count):
     else:
         r = conn.execute('SELECT * FROM proxies WHERE validated=? ORDER BY RANDOM()', (True,))
     proxies = [Proxy.decode(row) for row in r]
+    r.close()
     return proxies
 
 def pushFetcherResult(name, proxies_cnt):

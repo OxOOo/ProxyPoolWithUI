@@ -7,7 +7,7 @@ class Proxy(object):
     代理，用于表示数据库中的一个记录
     """
 
-    ddl = """
+    ddls = ["""
     CREATE TABLE IF NOT EXISTS proxies
     (
         fetcher_name VARCHAR(255) NOT NULL,
@@ -20,7 +20,15 @@ class Proxy(object):
         validate_failed_cnt INTEGER NOT NULL,
         PRIMARY KEY (protocal, ip, port)
     )
+    """,
     """
+    CREATE INDEX IF NOT EXISTS proxies_fetcher_name_index
+    ON proxies(fetcher_name)
+    """,
+    """
+    CREATE INDEX IF NOT EXISTS proxies_to_validate_date_index
+    ON proxies(to_validate_date ASC)
+    """]
 
     def __init__(self):
         self.fetcher_name = None

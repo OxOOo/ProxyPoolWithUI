@@ -7,7 +7,7 @@ class Fetcher(object):
     爬取器的状态储存在数据库中，包括是否启用爬取器，爬取到的代理数量等
     """
 
-    ddl = """
+    ddls = ["""
     CREATE TABLE IF NOT EXISTS fetchers
     (
         name VARCHAR(255) NOT NULL,
@@ -17,7 +17,7 @@ class Fetcher(object):
         last_fetch_date TIMESTAMP,
         PRIMARY KEY (name)
     )
-    """
+    """]
 
     def __init__(self):
         self.name = None

@@ -4,7 +4,7 @@
 * 定时对代理进行验证，集成API随时返回可用代理
 * 不需要第三方数据库支持，一键启动，简单易用
 * 集成WEB管理界面，方便查看代理状态并对代理池进行配置
-* 拥有丰富的注释，可以非常方便地学习或修改
+* 拥有详细的注释，可以非常方便地学习或修改
 
 如果你知道有好用的代理源，或者是发现本项目存在一些问题，欢迎通过Issues和我们讨论。
 
@@ -84,7 +84,7 @@ def main():
     print(u'获取到的代理是：' + proxy_uri)
     
     proxies = { 'http': proxy_uri }
-    html = requests.get('http://www.baidu.com', proxies=proxies)
+    html = requests.get('http://www.baidu.com', proxies=proxies).text
     if u'百度一下，你就知道' in html:
         print('代理可用')
     else:

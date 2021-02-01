@@ -13,7 +13,7 @@ def init():
 
     conn = sqlite3.connect(DATABASE_PATH)
 
-    create_tables = [Proxy.ddl, Fetcher.ddl]
+    create_tables = Proxy.ddls + Fetcher.ddls
     for sql in create_tables:
         conn.execute(sql)
         conn.commit()

@@ -48,18 +48,24 @@ def main():
             out_cnt = out_cnt + 1
         if out_cnt > 0:
             logger.info(f'完成了{out_cnt}个代理的验证')
-        
+
+        # 如果正在进行验证的代理足够多，那么就不着急添加新代理        
         if len(running_proxies) >= VALIDATE_THREAD_NUM:
             time.sleep(PROC_VALIDATOR_SLEEP)
             continue
 
         # 找一些新的待验证的代理放入队列中
+        added_cnt = 0
         for proxy in conn.getToValidate(VALIDATE_THREAD_NUM):
             uri = f'{proxy.protocal}://{proxy.ip}:{proxy.port}'
             # 这里找出的代理有可能是正在进行验证的代理，要避免重复加入
             if uri not in running_proxies:
                 running_proxies.add(uri)
                 in_que.put(proxy)
+                added_cnt += 1
+        
+        if added_cnt == 0:
+            time.sleep(PROC_VALIDATOR_SLEEP)
 
 def validate_thread(in_que, out_que):
     """
