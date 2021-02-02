@@ -36,6 +36,15 @@ jobs:
         - PATH=/c/Python36:/c/Python36/Scripts:$PATH
         - PYTHON=python
         - PIP=pip
+    - name: "Python 3.7 on Windows"
+      os: windows
+      language: shell
+      before_install:
+        - choco install python --version 3.7.4
+      env:
+        - PATH=/c/Python37:/c/Python37/Scripts:$PATH
+        - PYTHON=python
+        - PIP=pip
 
 install:
   - $PYTHON --version
