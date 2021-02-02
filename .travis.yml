@@ -32,8 +32,8 @@ jobs:
       language: shell
       before_install:
         - choco install python --version 3.6.8
-        - python --version
       env:
+        - PATH=/c/Python36:/c/Python36/Scripts:$PATH
         - PYTHON=python
         - PIP=pip
 
