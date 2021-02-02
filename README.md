@@ -1,5 +1,13 @@
 # 简易好用的免费代理池
 
+[![Build Status](https://travis-ci.com/believedotchenyu/ProxyPoolWithUI.svg?branch=main)](https://travis-ci.com/believedotchenyu/ProxyPoolWithUI)
+[![](https://img.shields.io/badge/python-3.6+-brightgreen)](https://github.com/believedotchenyu/ProxyPoolWithUI)
+
+兼容系统：
+![Windows](https://img.shields.io/badge/Windows-o-brightgreen)
+![Linux](https://img.shields.io/badge/Linux-o-brightgreen)
+![MacOS](https://img.shields.io/badge/MacOS-o-brightgreen)
+
 * 定时自动爬取网络上的免费代理
 * 定时对代理进行验证，集成API随时返回可用代理
 * 不需要第三方数据库支持，一键启动，简单易用
