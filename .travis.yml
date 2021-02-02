@@ -20,9 +20,16 @@ jobs:
       env:
         - PYTHON=python3
         - PIP=pip3
-    - name: "Python 3.7.4 on macOS"
+    - name: "Python 3.7 on macOS"
       os: osx
       osx_image: xcode11.2
+      language: shell
+      env:
+        - PYTHON=python3
+        - PIP=pip3
+    - name: "Python 3.8 on macOS"
+      os: osx
+      osx_image: xcode11.3
       language: shell
       env:
         - PYTHON=python3
