@@ -27,13 +27,15 @@ jobs:
       env:
         - PYTHON=python3
         - PIP=pip3
-    - name: "Python 3.8 on macOS"
-      os: osx
-      osx_image: xcode11.3
+    - name: "Python 3.6 on Windows"
+      os: windows
       language: shell
+      before_install:
+        - choco install python --version 3.6.8
+        - python --version
       env:
-        - PYTHON=python3
-        - PIP=pip3
+        - PYTHON=python
+        - PIP=pip
 
 install:
   - $PYTHON --version
