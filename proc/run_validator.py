@@ -86,6 +86,7 @@ def validate_thread(in_que, out_que):
                     'https': f'{proxy.protocal}://{proxy.ip}:{proxy.port}'
                 }
                 r = requests.get(VALIDATE_URL, timeout=VALIDATE_TIMEOUT, proxies=proxies)
+                r.encoding = "utf-8"
                 html = r.text
                 if VALIDATE_TEXT in html:
                     success = True

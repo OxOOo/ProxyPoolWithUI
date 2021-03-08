@@ -30,6 +30,7 @@
 
 | 名称         | 地址                        |
 |--------------|-----------------------------|
+| 悠悠网络代理   | https://uu-proxy.com/      |
 | 快代理       | https://www.kuaidaili.com/  |
 | 全网代理     | http://www.goubanjia.com/   |
 | 66代理       | http://www.66ip.cn/         |

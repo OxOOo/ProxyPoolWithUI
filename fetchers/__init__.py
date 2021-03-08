@@ -3,6 +3,7 @@
 from collections import namedtuple
 Fetcher = namedtuple('Fetcher', ['name', 'fetcher'])
 
+from .UUFetcher import UUFetcher
 from .KuaidailiFetcher import KuaidailiFetcher
 from .GoubanjiaFetcher import GoubanjiaFetcher
 from .IP66Fetcher import IP66Fetcher
@@ -12,6 +13,7 @@ from .IHuanFetcher import IHuanFetcher
 from .IP89Fetcher import IP89Fetcher
 
 fetchers = [
+    Fetcher(name='uu-proxy.com', fetcher=UUFetcher),
     Fetcher(name='www.kuaidaili.com', fetcher=KuaidailiFetcher),
     Fetcher(name='www.goubanjia.com', fetcher=GoubanjiaFetcher),
     Fetcher(name='www.66ip.cn', fetcher=IP66Fetcher),

@@ -65,7 +65,7 @@ def page_fetchers():
 @app.route('/proxies_status', methods=['GET'])
 def proxies_status():
     proxies = conn.getValidatedRandom(-1)
-    proxies = sorted(proxies, key=lambda p: f'{p.protocal}://{p.ip}:{p.port}')
+    proxies = sorted(proxies, key=lambda p: f'{p.protocal}://{p.ip}:{p.port}', reverse=True)
     proxies = [p.to_dict() for p in proxies]
 
     status = conn.getProxiesStatus()

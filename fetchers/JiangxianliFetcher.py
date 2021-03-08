@@ -17,7 +17,7 @@ class JiangxianliFetcher(BaseFetcher):
         """
 
         urls = []
-        for page in range(1, 11):
+        for page in range(1, 5):
             url = f'https://ip.jiangxianli.com/?page={page}'
             urls.append(url)
 
