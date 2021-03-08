@@ -1,7 +1,7 @@
 # 简易好用的免费代理池
 
-[![Build Status](https://travis-ci.com/believedotchenyu/ProxyPoolWithUI.svg?branch=main)](https://travis-ci.com/believedotchenyu/ProxyPoolWithUI)
-[![](https://img.shields.io/badge/python-3.6+-brightgreen)](https://github.com/believedotchenyu/ProxyPoolWithUI)
+[![Build Status](https://travis-ci.com/OxOOo/ProxyPoolWithUI.svg?branch=main)](https://travis-ci.com/OxOOo/ProxyPoolWithUI)
+[![](https://img.shields.io/badge/python-3.6+-brightgreen)](https://github.com/OxOOo/ProxyPoolWithUI)
 
 兼容系统：
 ![Windows](https://img.shields.io/badge/Windows-o-brightgreen)
@@ -14,7 +14,10 @@
 * 集成WEB管理界面，方便查看代理状态并对代理池进行配置
 * 拥有详细的注释，可以非常方便地学习或修改
 
-HTTP代理原理可阅读 [博客](https://zhuanlan.zhihu.com/p/349028243) 。
+推荐:
+* [HTTP代理原理](https://zhuanlan.zhihu.com/p/349028243) 。
+
+项目Demo：[http://chenyu0x00.com:8888/](http://chenyu0x00.com:8888/)
 
 如果你知道有好用的代理源，或者是发现本项目存在一些问题，欢迎通过Issues和我们讨论。
 
@@ -42,7 +45,7 @@ HTTP代理原理可阅读 [博客](https://zhuanlan.zhihu.com/p/349028243) 。
 1. 下载代码
 
 ```bash
-git clone https://github.com/believedotchenyu/ProxyPoolWithUI.git
+git clone https://github.com/OxOOo/ProxyPoolWithUI.git
 ```
 
 2. 安装Python依赖(在`ProxyPoolWithUI`目录下执行)

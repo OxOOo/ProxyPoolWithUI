@@ -18,7 +18,7 @@
                             </NuxtLink>
                         </a-menu-item>
                         <a-menu-item key="github">
-                            <a href="https://github.com/believedotchenyu/ProxyPoolWithUI" target="_blank">
+                            <a href="https://github.com/OxOOo/ProxyPoolWithUI" target="_blank">
                                 <a-icon type="github" />
                                 <span>Github主页</span>
                             </a>
