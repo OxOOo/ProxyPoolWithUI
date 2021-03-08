@@ -15,7 +15,7 @@
 * 拥有详细的注释，可以非常方便地学习或修改
 
 推荐:
-* [HTTP代理原理](https://zhuanlan.zhihu.com/p/349028243) 。
+* [HTTP代理原理](https://zhuanlan.zhihu.com/p/349028243)
 
 项目Demo：[http://chenyu0x00.com:8888/](http://chenyu0x00.com:8888/)
 

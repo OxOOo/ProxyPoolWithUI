@@ -48,7 +48,7 @@ jobs:
 
 install:
   - $PYTHON --version
-  - $PIP install -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.txt
+  - $PIP install -r requirements.txt
 
 script:
   - $PYTHON --version
