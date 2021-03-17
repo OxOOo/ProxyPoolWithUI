@@ -29,6 +29,11 @@ def main():
     logger = logging.getLogger('fetcher')
     while True:
         logger.info('开始运行一轮爬取器')
+        status = conn.getProxiesStatus()
+        if status['pending_proxies_cnt'] > 2000:
+            logger.info(f"还有{status['pending_proxies_cnt']}个代理等待验证，数量过多，跳过本次爬取")
+            time.sleep(PROC_FETCHER_SLEEP)
+            continue
 
         def run_thread(name, fetcher, que):
             """

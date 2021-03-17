@@ -23,7 +23,7 @@ def main():
         has_error = False
         for p in processes:
             if p.exitcode is not None:
-                print(f'进程{p.name}异常推出, exitcode={p.exitcode}')
+                print(f'进程{p.name}异常退出, exitcode={p.exitcode}')
                 has_error = True
                 break
         if has_error:

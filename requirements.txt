@@ -13,3 +13,4 @@ requests==2.25.1
 urllib3==1.26.3
 Werkzeug==1.0.1
 PySocks==1.7.1
+func-timeout==4.3.5

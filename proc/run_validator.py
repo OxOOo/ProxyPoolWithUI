@@ -10,6 +10,8 @@ from queue import Queue
 import logging
 import time
 import requests
+from func_timeout import func_set_timeout
+from func_timeout.exceptions import FunctionTimedOut
 from db import conn
 from config import PROC_VALIDATOR_SLEEP, VALIDATE_THREAD_NUM
 from config import VALIDATE_TEXT, VALIDATE_URL, VALIDATE_TIMEOUT, VALIDATE_MAX_FAILS
@@ -67,6 +69,22 @@ def main():
         if added_cnt == 0:
             time.sleep(PROC_VALIDATOR_SLEEP)
 
+@func_set_timeout(VALIDATE_TIMEOUT * 2)
+def validate_once(proxy):
+    """
+    进行一次验证，如果验证成功则返回True，否则返回False或者是异常
+    """
+    proxies = {
+        'http': f'{proxy.protocal}://{proxy.ip}:{proxy.port}',
+        'https': f'{proxy.protocal}://{proxy.ip}:{proxy.port}'
+    }
+    r = requests.get(VALIDATE_URL, timeout=VALIDATE_TIMEOUT, proxies=proxies)
+    r.encoding = "utf-8"
+    html = r.text
+    if VALIDATE_TEXT in html:
+        return True
+    return False
+
 def validate_thread(in_que, out_que):
     """
     验证函数，这个函数会在一个线程中被调用
@@ -81,17 +99,12 @@ def validate_thread(in_que, out_que):
         success = False
         for _ in range(VALIDATE_MAX_FAILS):
             try:
-                proxies = {
-                    'http': f'{proxy.protocal}://{proxy.ip}:{proxy.port}',
-                    'https': f'{proxy.protocal}://{proxy.ip}:{proxy.port}'
-                }
-                r = requests.get(VALIDATE_URL, timeout=VALIDATE_TIMEOUT, proxies=proxies)
-                r.encoding = "utf-8"
-                html = r.text
-                if VALIDATE_TEXT in html:
+                if validate_once(proxy):
                     success = True
                     break
             except Exception as e:
+                pass
+            except FunctionTimedOut:
                 pass
 
         out_que.put((proxy, success))
