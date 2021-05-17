@@ -51,7 +51,8 @@ def citest():
         assert p.process is None
         p.process = Process(target=p.target, name=p.name, daemon=False)
         p.process.start()
-        print(f'启动{p.name}进程，pid={p.process.pid}')
+        # print(f'启动{p.name}进程，pid={p.process.pid}')
+        print(f'running {p.name}')
         p.start_time = time.time()
     
     time.sleep(10)
@@ -71,4 +72,4 @@ if __name__ == '__main__':
     except Exception as e:
         print('========FATAL ERROR=========')
         print(e)
-        os.killpg(os.getpgid(os.getpid()), signal.SIGKILL) # 主要是为了连同子进程一起退出
+        sys.exit(1)
