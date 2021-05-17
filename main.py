@@ -51,8 +51,7 @@ def citest():
         assert p.process is None
         p.process = Process(target=p.target, name=p.name, daemon=False)
         p.process.start()
-        # print(f'启动{p.name}进程，pid={p.process.pid}')
-        print(f'running {p.name}')
+        print(f'running {p.name}, pid={p.process.pid}')
         p.start_time = time.time()
     
     time.sleep(10)
