@@ -52,4 +52,4 @@ install:
 
 script:
   - $PYTHON --version
-  - $PYTHON main.py test
+  - $PYTHON main.py citest

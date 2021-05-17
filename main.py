@@ -1,37 +1,74 @@
 # encoding: utf-8
 
-import sys,os
+import sys, os, signal
 sys.path.append(os.path.dirname(__file__) + os.sep + '../')
 from multiprocessing import Process
 import time
 from proc import run_fetcher, run_validator
 from api import api
 
+class Item:
+    def __init__(self, target, name):
+        self.target = target
+        self.name = name
+        self.process = None
+        self.start_time = 0
+
 def main():
-    if len(sys.argv) >= 2 and sys.argv[1] == 'test':
-        return
-
     processes = []
-    processes.append(Process(target=run_fetcher.main, name='fetcher'))
-    processes.append(Process(target=run_validator.main, name='validator'))
-    processes.append(Process(target=api.main, name='api'))
+    processes.append(Item(target=run_fetcher.main, name='fetcher'))
+    processes.append(Item(target=run_validator.main, name='validator'))
+    processes.append(Item(target=api.main, name='api'))
+
+    while True:
+        for p in processes:
+            if p.process is None:
+                p.process = Process(target=p.target, name=p.name, daemon=False)
+                p.process.start()
+                print(f'启动{p.name}进程，pid={p.process.pid}')
+                p.start_time = time.time()
+
+        for p in processes:
+            if p.process is not None:
+                if not p.process.is_alive():
+                    print(f'进程{p.name}异常退出, exitcode={p.process.exitcode}')
+                    p.process.terminate()
+                    p.process = None
+                elif p.start_time + 60 * 60 < time.time(): # 最长运行1小时就重启
+                    print(f'进程{p.name}运行太久，重启')
+                    p.process.terminate()
+                    p.process = None
+
+        time.sleep(0.2)
+
+def citest():
+    processes = []
+    processes.append(Item(target=run_fetcher.main, name='fetcher'))
+    processes.append(Item(target=run_validator.main, name='validator'))
+    processes.append(Item(target=api.main, name='api'))
 
     for p in processes:
-        p.start()
-        print(f'启动{p.name}进程，pid={p.pid}')
-    while True:
-        has_error = False
-        for p in processes:
-            if p.exitcode is not None:
-                print(f'进程{p.name}异常退出, exitcode={p.exitcode}')
-                has_error = True
-                break
-        if has_error:
-            break
-        time.sleep(0.2)
+        assert p.process is None
+        p.process = Process(target=p.target, name=p.name, daemon=False)
+        p.process.start()
+        print(f'启动{p.name}进程，pid={p.process.pid}')
+        p.start_time = time.time()
+    
+    time.sleep(10)
+
     for p in processes:
-        if p.exitcode is None:
-            p.terminate()
+        assert p.process is not None
+        assert p.process.is_alive()
+        p.process.terminate()
 
 if __name__ == '__main__':
-    main()
+    try:
+        if len(sys.argv) >= 2 and sys.argv[1] == 'citest':
+            citest()
+        else:
+            main()
+        sys.exit(0)
+    except Exception as e:
+        print('========FATAL ERROR=========')
+        print(e)
+        os.killpg(os.getpgid(os.getpid()), signal.SIGKILL) # 主要是为了连同子进程一起退出
