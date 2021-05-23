@@ -69,6 +69,27 @@ python3 main.py
 
 4. 使用浏览器打开`http://localhost:5000`，可以看到WEB管理界面。
 
+## Docker构建项目
+
+1. 下载项目文件
+
+```bash
+git clone https://github.com/OxOOo/ProxyPoolWithUI.git
+cd ProxyPoolWithUI
+```
+
+2. 构建docker镜像
+
+```bash
+docker build --tag proxy_pool .
+```
+
+3. 运行镜像
+
+```bash
+docker run -p 5000:5000 -d proxy_pool
+```
+
 ## 使用代理
 
 1. API接口
