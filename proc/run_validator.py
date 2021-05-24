@@ -14,7 +14,7 @@ from func_timeout import func_set_timeout
 from func_timeout.exceptions import FunctionTimedOut
 from db import conn
 from config import PROC_VALIDATOR_SLEEP, VALIDATE_THREAD_NUM
-from config import VALIDATE_TEXT, VALIDATE_URL, VALIDATE_TIMEOUT, VALIDATE_MAX_FAILS
+from config import VALIDATE_METHOD, VALIDATE_KEYWORD, VALIDATE_HEADER, VALIDATE_URL, VALIDATE_TIMEOUT, VALIDATE_MAX_FAILS
 
 logging.basicConfig(stream=sys.stdout, format="%(asctime)s-%(levelname)s:%(name)s:%(message)s", level='INFO')
 
@@ -78,12 +78,19 @@ def validate_once(proxy):
         'http': f'{proxy.protocal}://{proxy.ip}:{proxy.port}',
         'https': f'{proxy.protocal}://{proxy.ip}:{proxy.port}'
     }
-    r = requests.get(VALIDATE_URL, timeout=VALIDATE_TIMEOUT, proxies=proxies)
-    r.encoding = "utf-8"
-    html = r.text
-    if VALIDATE_TEXT in html:
-        return True
-    return False
+    if VALIDATE_METHOD == "GET":
+        r = requests.get(VALIDATE_URL, timeout=VALIDATE_TIMEOUT, proxies=proxies)
+        r.encoding = "utf-8"
+        html = r.text
+        if VALIDATE_KEYWORD in html:
+            return True
+        return False
+    else:
+        r = requests.head(VALIDATE_URL, timeout=VALIDATE_TIMEOUT, proxies=proxies)
+        resp_headers = r.headers
+        if VALIDATE_KEYWORD in resp_headers[VALIDATE_HEADER]:
+            return True
+        return False
 
 def validate_thread(in_que, out_que):
     """
