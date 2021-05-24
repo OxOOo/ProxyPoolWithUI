@@ -88,7 +88,7 @@ def validate_once(proxy):
     else:
         r = requests.head(VALIDATE_URL, timeout=VALIDATE_TIMEOUT, proxies=proxies)
         resp_headers = r.headers
-        if VALIDATE_KEYWORD in resp_headers[VALIDATE_HEADER]:
+        if VALIDATE_HEADER in resp_headers.keys() and VALIDATE_KEYWORD in resp_headers[VALIDATE_HEADER]:
             return True
         return False
 
