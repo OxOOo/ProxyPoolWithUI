@@ -1,6 +1,5 @@
 # 简易好用的免费代理池
 
-[![Build Status](https://travis-ci.com/OxOOo/ProxyPoolWithUI.svg?branch=main)](https://travis-ci.com/OxOOo/ProxyPoolWithUI)
 [![](https://img.shields.io/badge/python-3.6+-brightgreen)](https://github.com/OxOOo/ProxyPoolWithUI)
 
 兼容系统：
