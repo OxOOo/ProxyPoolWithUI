@@ -27,6 +27,6 @@ VALIDATE_THREAD_NUM = 80 # 验证线程数量
 VALIDATE_URL = 'https://www.baidu.com'
 VALIDATE_METHOD = 'GET' # 验证方式，可选：GET、HEAD
 VALIDATE_HEADER = 'Server' # 仅用于HEAD验证方式，百度响应头Server字段KEYWORD可填：bfe
-VALIDATE_KEY = '百度一下，你就知道'
+VALIDATE_KEYWORD = '百度一下，你就知道'
 VALIDATE_TIMEOUT = 5 # 超时时间，单位s
 VALIDATE_MAX_FAILS = 3
