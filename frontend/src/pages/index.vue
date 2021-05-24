@@ -69,7 +69,7 @@
         <a-table
             :columns="columns"
             :data-source="proxies"
-            :row-key="(r) => `${r.protocal}://${r.ip}:${r.port}`"
+            :row-key="(r) => `${r.protocol}://${r.ip}:${r.port}`"
             :pagination="false"
             :bordered="true"
         >
@@ -98,7 +98,7 @@ const columns = [
     },
     {
         title: '代理类型',
-        dataIndex: 'protocal'
+        dataIndex: 'protocol'
     },
     {
         title: 'IP',
@@ -127,7 +127,7 @@ const columns = [
 // const data = [
 //     {
 //         fetcher_name: '1',
-//         protocal: 'http',
+//         protocol: 'http',
 //         ip: '127.0.0.1',
 //         port: 308,
 //         validated: true,

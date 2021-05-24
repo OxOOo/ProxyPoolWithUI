@@ -44,7 +44,7 @@ def main():
         while not out_que.empty():
             proxy, success = out_que.get()
             conn.pushValidateResult(proxy, success)
-            uri = f'{proxy.protocal}://{proxy.ip}:{proxy.port}'
+            uri = f'{proxy.protocol}://{proxy.ip}:{proxy.port}'
             assert uri in running_proxies
             running_proxies.remove(uri)
             out_cnt = out_cnt + 1
@@ -59,7 +59,7 @@ def main():
         # 找一些新的待验证的代理放入队列中
         added_cnt = 0
         for proxy in conn.getToValidate(VALIDATE_THREAD_NUM):
-            uri = f'{proxy.protocal}://{proxy.ip}:{proxy.port}'
+            uri = f'{proxy.protocol}://{proxy.ip}:{proxy.port}'
             # 这里找出的代理有可能是正在进行验证的代理，要避免重复加入
             if uri not in running_proxies:
                 running_proxies.add(uri)
@@ -75,8 +75,8 @@ def validate_once(proxy):
     进行一次验证，如果验证成功则返回True，否则返回False或者是异常
     """
     proxies = {
-        'http': f'{proxy.protocal}://{proxy.ip}:{proxy.port}',
-        'https': f'{proxy.protocal}://{proxy.ip}:{proxy.port}'
+        'http': f'{proxy.protocol}://{proxy.ip}:{proxy.port}',
+        'https': f'{proxy.protocol}://{proxy.ip}:{proxy.port}'
     }
     if VALIDATE_METHOD == "GET":
         r = requests.get(VALIDATE_URL, timeout=VALIDATE_TIMEOUT, proxies=proxies)

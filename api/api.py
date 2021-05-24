@@ -32,7 +32,7 @@ def fetch_random():
     proxies = conn.getValidatedRandom(1)
     if len(proxies) > 0:
         p = proxies[0]
-        return f'{p.protocal}://{p.ip}:{p.port}'
+        return f'{p.protocol}://{p.ip}:{p.port}'
     else:
         return ''
 
@@ -40,7 +40,7 @@ def fetch_random():
 @app.route('/fetch_all', methods=['GET'])
 def fetch_all():
     proxies = conn.getValidatedRandom(-1)
-    proxies = [f'{p.protocal}://{p.ip}:{p.port}' for p in proxies]
+    proxies = [f'{p.protocol}://{p.ip}:{p.port}' for p in proxies]
     return ','.join(proxies)
 
 ############# 以下API主要给网页使用 ################
@@ -65,7 +65,7 @@ def page_fetchers():
 @app.route('/proxies_status', methods=['GET'])
 def proxies_status():
     proxies = conn.getValidatedRandom(-1)
-    proxies = sorted(proxies, key=lambda p: f'{p.protocal}://{p.ip}:{p.port}', reverse=True)
+    proxies = sorted(proxies, key=lambda p: f'{p.protocol}://{p.ip}:{p.port}', reverse=True)
     proxies = [p.to_dict() for p in proxies]
 
     status = conn.getProxiesStatus()
