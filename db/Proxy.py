@@ -11,14 +11,14 @@ class Proxy(object):
     CREATE TABLE IF NOT EXISTS proxies
     (
         fetcher_name VARCHAR(255) NOT NULL,
-        protocal VARCHAR(32) NOT NULL,
+        protocol VARCHAR(32) NOT NULL,
         ip VARCHAR(255) NOT NULL,
         port INTEGER NOT NULL,
         validated BOOLEAN NOT NULL,
         validate_date TIMESTAMP,
         to_validate_date TIMESTAMP NOT NULL,
         validate_failed_cnt INTEGER NOT NULL,
-        PRIMARY KEY (protocal, ip, port)
+        PRIMARY KEY (protocol, ip, port)
     )
     """,
     """
@@ -32,7 +32,7 @@ class Proxy(object):
 
     def __init__(self):
         self.fetcher_name = None
-        self.protocal = None
+        self.protocol = None
         self.ip = None
         self.port = None
         self.validated = False
@@ -46,7 +46,7 @@ class Proxy(object):
         """
         return (
             self.fetcher_name,
-            self.protocal, self.ip, self.port,
+            self.protocol, self.ip, self.port,
             self.validated, self.validate_date, self.to_validate_date, self.validate_failed_cnt
         )
     
@@ -56,7 +56,7 @@ class Proxy(object):
         """
         return {
             'fetcher_name': self.fetcher_name,
-            'protocal': self.protocal,
+            'protocol': self.protocol,
             'ip': self.ip,
             'port': self.port,
             'validated': self.validated,
@@ -74,7 +74,7 @@ class Proxy(object):
         assert len(row) == 8
         p = Proxy()
         p.fetcher_name = row[0]
-        p.protocal = row[1]
+        p.protocol = row[1]
         p.ip = row[2]
         p.port = row[3]
         p.validated = bool(row[4])

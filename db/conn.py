@@ -13,11 +13,11 @@ import time
 
 conn = sqlite3.connect(DATABASE_PATH, detect_types=sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES)
 
-def pushNewFetch(fetcher_name, protocal, ip, port):
+def pushNewFetch(fetcher_name, protocol, ip, port):
     """
     爬取器新抓到了一个代理，调用本函数将代理放入数据库
     fetcher_name : 爬取器名称
-    protocal : 代理协议
+    protocol : 代理协议
     ip : 代理IP地址
     port : 代理端口
     """
@@ -25,20 +25,20 @@ def pushNewFetch(fetcher_name, protocal, ip, port):
 
     p = Proxy()
     p.fetcher_name = fetcher_name
-    p.protocal = protocal
+    p.protocol = protocol
     p.ip = ip
     p.port = port
 
     c = conn.cursor()
     c.execute('BEGIN EXCLUSIVE TRANSACTION;')
     # 更新proxies表
-    c.execute('SELECT * FROM proxies WHERE protocal=? AND ip=? AND port=?', (p.protocal, p.ip, p.port))
+    c.execute('SELECT * FROM proxies WHERE protocol=? AND ip=? AND port=?', (p.protocol, p.ip, p.port))
     row = c.fetchone()
-    if row is not None: # 已经存在(protocal, ip, port)
+    if row is not None: # 已经存在(protocol, ip, port)
         old_p = Proxy.decode(row)
         c.execute("""
-            UPDATE proxies SET fetcher_name=?,to_validate_date=? WHERE protocal=? AND ip=? AND port=?
-        """, (p.fetcher_name, min(datetime.datetime.now(), old_p.to_validate_date), p.protocal, p.ip, p.port))
+            UPDATE proxies SET fetcher_name=?,to_validate_date=? WHERE protocol=? AND ip=? AND port=?
+        """, (p.fetcher_name, min(datetime.datetime.now(), old_p.to_validate_date), p.protocol, p.ip, p.port))
     else:
         c.execute('INSERT INTO proxies VALUES (?,?,?,?,?,?,?,?)', p.params())
     c.close()
@@ -80,15 +80,15 @@ def pushValidateResult(proxy, success):
     p = proxy
     should_remove = p.validate(success)
     if should_remove:
-        conn.execute('DELETE FROM proxies WHERE protocal=? AND ip=? AND port=?', (p.protocal, p.ip, p.port))
+        conn.execute('DELETE FROM proxies WHERE protocol=? AND ip=? AND port=?', (p.protocol, p.ip, p.port))
     else:
         conn.execute("""
             UPDATE proxies
             SET fetcher_name=?,validated=?,validate_date=?,to_validate_date=?,validate_failed_cnt=?
-            WHERE protocal=? AND ip=? AND port=?
+            WHERE protocol=? AND ip=? AND port=?
         """, (
             p.fetcher_name, p.validated, p.validate_date, p.to_validate_date, p.validate_failed_cnt,
-            p.protocal, p.ip, p.port
+            p.protocol, p.ip, p.port
         ))
     conn.commit()
 
