@@ -11,6 +11,7 @@ from .IP3366Fetcher import IP3366Fetcher
 from .JiangxianliFetcher import JiangxianliFetcher
 from .IHuanFetcher import IHuanFetcher
 from .IP89Fetcher import IP89Fetcher
+from .ProxyscanFetcher import ProxyscanFetcher
 
 fetchers = [
     Fetcher(name='uu-proxy.com', fetcher=UUFetcher),
@@ -21,4 +22,5 @@ fetchers = [
     Fetcher(name='ip.jiangxianli.com', fetcher=JiangxianliFetcher),
     Fetcher(name='ip.ihuan.me', fetcher=IHuanFetcher),
     Fetcher(name='www.89ip.cn', fetcher=IP89Fetcher),
+    Fetcher(name='www.proxyscan.io', fetcher=ProxyscanFetcher)
 ]
