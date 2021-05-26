@@ -39,6 +39,7 @@
 | 免费代理库   | https://ip.jiangxianli.com/ |
 | 小幻HTTP代理 | https://ip.ihuan.me/        |
 | 89免费代理   | https://www.89ip.cn/        |
+| ProxyScan   | https://www.proxyscan.io/   |
 
 ## 运行本项目
 
