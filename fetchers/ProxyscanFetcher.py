@@ -1,24 +1,37 @@
-from .BaseFetcher import BaseFetcher
-import requests
-import time
+import re
 
-class ProxyscanFetcher(BaseFetcher):
+import requests
+
+from .BaseFetcher import BaseFetcher
+
+
+class ProxyScanFetcher(BaseFetcher):
     """
-    https://www.proxyscan.io/api/proxy?last_check=9800&uptime=50&limit=20&_t={{ timestamp }}
+    https://www.proxyscan.io
     """
+    index = 0
 
     def fetch(self):
         """
         执行一次爬取，返回一个数组，每个元素是(protocol, ip, port)，portocol是协议名称，目前主要为http
         返回示例：[('http', '127.0.0.1', 8080), ('http', '127.0.0.1', 1234)]
         """
+
+        url = "https://www.proxyscan.io/download?type=http"
+
         proxies = []
-        # 此API为随机获取接口，获取策略为：重复取十次后去重
-        for _ in range(10):
-            url = "https://www.proxyscan.io/api/proxy?last_check=9800&uptime=50&limit=20&_t=" + str(time.time())
-            resp = requests.get(url).json()
-            for data in resp:
-                protocol = str.lower(data['Type'][0])
-                proxies.append((protocol, data['Ip'], data['Port']))
-        
+        ip_regex = re.compile(r'^\d+\.\d+\.\d+\.\d+$')
+        port_regex = re.compile(r'^\d+$')
+
+        html = requests.get(url, timeout=10).text
+        for item in html.split("\n"):
+            try:
+                ip = item.split(":")[0]
+                port = item.split(":")[1]
+                proxies.append(('http', ip, int(port)))
+                if re.match(ip_regex, ip) is not None and re.match(port_regex, port) is not None:
+                    proxies.append(('http', ip, int(port)))
+            except Exception:
+                continue
+
         return list(set(proxies))
