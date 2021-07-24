@@ -7,7 +7,7 @@ from fetchers import fetchers
 def run():
     proxies_cnt = dict()
     for item in fetchers:
-        if item.name != 'uu-proxy.com': continue # 这行表示只测试特定的爬取器
+        if item.name != 'www.xsdaili.cn': continue # 这行表示只测试特定的爬取器
 
         print('='*10, 'RUNNING ' + item.name, '='*10)
         fetcher = item.fetcher() # 实例化爬取器
