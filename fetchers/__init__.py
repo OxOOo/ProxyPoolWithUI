@@ -11,6 +11,7 @@ from .IP3366Fetcher import IP3366Fetcher
 from .JiangxianliFetcher import JiangxianliFetcher
 from .IHuanFetcher import IHuanFetcher
 from .IP89Fetcher import IP89Fetcher
+from .ProxyscanFetcher import ProxyscanFetcher
 from .KaiXinFetcher import KaiXinFetcher
 from .XiLaFetcher import XiLaFetcher
 from .XiaoShuFetcher import XiaoShuFetcher
@@ -23,6 +24,7 @@ fetchers = [
     Fetcher(name='www.ip3366.net', fetcher=IP3366Fetcher),
     Fetcher(name='ip.jiangxianli.com', fetcher=JiangxianliFetcher),
     Fetcher(name='ip.ihuan.me', fetcher=IHuanFetcher),
+    Fetcher(name='www.proxyscan.io', fetcher=ProxyscanFetcher),
     Fetcher(name='www.89ip.cn', fetcher=IP89Fetcher),
     Fetcher(name='www.kxdaili.com', fetcher=KaiXinFetcher),
     Fetcher(name='www.xiladaili.com', fetcher=XiLaFetcher),
