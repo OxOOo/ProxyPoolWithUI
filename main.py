@@ -42,6 +42,9 @@ def main():
         time.sleep(0.2)
 
 def citest():
+    """
+    此函数仅用于检查程序是否可运行，一般情况下使用本项目可忽略
+    """
     processes = []
     processes.append(Item(target=run_fetcher.main, name='fetcher'))
     processes.append(Item(target=run_validator.main, name='validator'))

@@ -1,5 +1,6 @@
 import re
 import time
+import random
 
 import requests
 from pyquery import PyQuery as pq
@@ -45,4 +46,11 @@ class XiaoShuFetcher(BaseFetcher):
                         port = line.split('@')[0].split(':')[1]
                         proxies.append(("http", ip, port))
 
-            return list(set(proxies))
+        proxies = list(set(proxies))
+
+        # 这个代理源数据太多了，验证器跑不过来
+        # 所以只取一部分，一般来说也够用了
+        if len(proxies) > 200:
+            proxies = random.sample(proxies, 200)
+
+        return proxies
