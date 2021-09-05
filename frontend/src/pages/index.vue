@@ -70,7 +70,6 @@
             :columns="columns"
             :data-source="proxies"
             :row-key="(r) => `${r.protocol}://${r.ip}:${r.port}`"
-            :pagination="false"
             :bordered="true"
         >
             <span slot="to_validate_date">
@@ -83,6 +82,13 @@
                     </template>
                     <a-icon type="question-circle" />
                 </a-tooltip>
+            </span>
+            <span slot="latency" slot-scope="latency">
+                <a-tag
+                    :color="latency < 2000 ? 'green' : (latency < 4000 ? 'orange' : 'red')"
+                >
+                    {{ latency }}
+                </a-tag>
             </span>
         </a-table>
     </div>
@@ -107,6 +113,11 @@ const columns = [
     {
         title: '端口',
         dataIndex: 'port'
+    },
+    {
+        title: '延迟',
+        dataIndex: 'latency',
+        scopedSlots: { customRender: 'latency' }
     },
     {
         title: '上次验证时间',

@@ -40,7 +40,7 @@ def pushNewFetch(fetcher_name, protocol, ip, port):
             UPDATE proxies SET fetcher_name=?,to_validate_date=? WHERE protocol=? AND ip=? AND port=?
         """, (p.fetcher_name, min(datetime.datetime.now(), old_p.to_validate_date), p.protocol, p.ip, p.port))
     else:
-        c.execute('INSERT INTO proxies VALUES (?,?,?,?,?,?,?,?)', p.params())
+        c.execute('INSERT INTO proxies VALUES (?,?,?,?,?,?,?,?,?)', p.params())
     c.close()
     conn.commit()
 
@@ -69,25 +69,26 @@ def getToValidate(max_count=1):
     conn.commit()
     return proxies
 
-def pushValidateResult(proxy, success):
+def pushValidateResult(proxy, success, latency):
     """
     将验证器的一个结果添加进数据库中
     proxy : 代理
     success : True/False，验证是否成功
+    latency : 本次验证所用的时间(单位毫秒)
     """
     time.sleep(0.1) # 为了解决并发读写饿死的问题
 
     p = proxy
-    should_remove = p.validate(success)
+    should_remove = p.validate(success, latency)
     if should_remove:
         conn.execute('DELETE FROM proxies WHERE protocol=? AND ip=? AND port=?', (p.protocol, p.ip, p.port))
     else:
         conn.execute("""
             UPDATE proxies
-            SET fetcher_name=?,validated=?,validate_date=?,to_validate_date=?,validate_failed_cnt=?
+            SET fetcher_name=?,validated=?,latency=?,validate_date=?,to_validate_date=?,validate_failed_cnt=?
             WHERE protocol=? AND ip=? AND port=?
         """, (
-            p.fetcher_name, p.validated, p.validate_date, p.to_validate_date, p.validate_failed_cnt,
+            p.fetcher_name, p.validated, p.latency, p.validate_date, p.to_validate_date, p.validate_failed_cnt,
             p.protocol, p.ip, p.port
         ))
     conn.commit()

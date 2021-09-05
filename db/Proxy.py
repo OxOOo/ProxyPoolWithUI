@@ -15,6 +15,7 @@ class Proxy(object):
         ip VARCHAR(255) NOT NULL,
         port INTEGER NOT NULL,
         validated BOOLEAN NOT NULL,
+        latency INTEGER,
         validate_date TIMESTAMP,
         to_validate_date TIMESTAMP NOT NULL,
         validate_failed_cnt INTEGER NOT NULL,
@@ -36,6 +37,7 @@ class Proxy(object):
         self.ip = None
         self.port = None
         self.validated = False
+        self.latency = None
         self.validate_date = None
         self.to_validate_date = datetime.datetime.now()
         self.validate_failed_cnt = 0
@@ -47,7 +49,8 @@ class Proxy(object):
         return (
             self.fetcher_name,
             self.protocol, self.ip, self.port,
-            self.validated, self.validate_date, self.to_validate_date, self.validate_failed_cnt
+            self.validated, self.latency,
+            self.validate_date, self.to_validate_date, self.validate_failed_cnt
         )
     
     def to_dict(self):
@@ -60,6 +63,7 @@ class Proxy(object):
             'ip': self.ip,
             'port': self.port,
             'validated': self.validated,
+            'latency': self.latency,
             'validate_date': str(self.validate_date) if self.validate_date is not None else None,
             'to_validate_date': str(self.to_validate_date) if self.to_validate_date is not None else None,
             'validate_failed_cnt': self.validate_failed_cnt
@@ -71,24 +75,26 @@ class Proxy(object):
         将sqlite返回的一行解析为Proxy
         row : sqlite返回的一行
         """
-        assert len(row) == 8
+        assert len(row) == 9
         p = Proxy()
         p.fetcher_name = row[0]
         p.protocol = row[1]
         p.ip = row[2]
         p.port = row[3]
         p.validated = bool(row[4])
-        p.validate_date = row[5]
-        p.to_validate_date = row[6]
-        p.validate_failed_cnt = row[7]
+        p.latency = row[5]
+        p.validate_date = row[6]
+        p.to_validate_date = row[7]
+        p.validate_failed_cnt = row[8]
         return p
     
-    def validate(self, success):
+    def validate(self, success, latency):
         """
         传入一次验证结果，根据验证结果调整自身属性，并返回是否删除这个代理
         success : True/False，表示本次验证是否成功
         返回 : True/False，True表示这个代理太差了，应该从数据库中删除
         """
+        self.latency = latency
         if success: # 验证成功
             self.validated = True
             self.validate_date = datetime.datetime.now()

@@ -42,8 +42,8 @@ def main():
     while True:
         out_cnt = 0
         while not out_que.empty():
-            proxy, success = out_que.get()
-            conn.pushValidateResult(proxy, success)
+            proxy, success, latency = out_que.get()
+            conn.pushValidateResult(proxy, success, latency)
             uri = f'{proxy.protocol}://{proxy.ip}:{proxy.port}'
             assert uri in running_proxies
             running_proxies.remove(uri)
@@ -104,9 +104,13 @@ def validate_thread(in_que, out_que):
         proxy = in_que.get()
 
         success = False
+        latency = None
         for _ in range(VALIDATE_MAX_FAILS):
             try:
+                start_time = time.time()
                 if validate_once(proxy):
+                    end_time = time.time()
+                    latency = int((end_time-start_time)*1000)
                     success = True
                     break
             except Exception as e:
@@ -114,4 +118,4 @@ def validate_thread(in_que, out_que):
             except FunctionTimedOut:
                 pass
 
-        out_que.put((proxy, success))
+        out_que.put((proxy, success, latency))
