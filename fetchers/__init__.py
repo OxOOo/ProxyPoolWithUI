@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 from collections import namedtuple
+
 Fetcher = namedtuple('Fetcher', ['name', 'fetcher'])
 
 from .UUFetcher import UUFetcher
@@ -15,6 +16,8 @@ from .ProxyscanFetcher import ProxyscanFetcher
 from .KaiXinFetcher import KaiXinFetcher
 from .XiLaFetcher import XiLaFetcher
 from .XiaoShuFetcher import XiaoShuFetcher
+from .ProxyListFetcher import ProxyListFetcher
+from .ProxyScrapeFetcher import ProxyScrapeFetcher
 
 fetchers = [
     Fetcher(name='uu-proxy.com', fetcher=UUFetcher),
@@ -29,4 +32,6 @@ fetchers = [
     Fetcher(name='www.kxdaili.com', fetcher=KaiXinFetcher),
     Fetcher(name='www.xiladaili.com', fetcher=XiLaFetcher),
     Fetcher(name='www.xsdaili.cn', fetcher=XiaoShuFetcher),
+    Fetcher(name='www.proxy-list.download', fetcher=ProxyListFetcher),
+    Fetcher(name='proxyscrape.com', fetcher=ProxyScrapeFetcher)
 ]
