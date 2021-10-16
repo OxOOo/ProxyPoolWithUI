@@ -76,7 +76,7 @@ def pushValidateResult(proxy, success, latency):
     success : True/False，验证是否成功
     latency : 本次验证所用的时间(单位毫秒)
     """
-    time.sleep(0.1) # 为了解决并发读写饿死的问题
+    time.sleep(0.01) # 为了解决并发读写饿死的问题
 
     p = proxy
     should_remove = p.validate(success, latency)
