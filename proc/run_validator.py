@@ -18,7 +18,7 @@ from config import VALIDATE_METHOD, VALIDATE_KEYWORD, VALIDATE_HEADER, VALIDATE_
 
 logging.basicConfig(stream=sys.stdout, format="%(asctime)s-%(levelname)s:%(name)s:%(message)s", level='INFO')
 
-def main():
+def main(proc_lock):
     """
     验证器
     主要逻辑：
@@ -29,6 +29,7 @@ def main():
         将代理发送给前面创建的线程
     """
     logger = logging.getLogger('validator')
+    conn.set_proc_lock(proc_lock)
 
     in_que = Queue()
     out_que = Queue()
@@ -45,20 +46,19 @@ def main():
             proxy, success, latency = out_que.get()
             conn.pushValidateResult(proxy, success, latency)
             uri = f'{proxy.protocol}://{proxy.ip}:{proxy.port}'
-            assert uri in running_proxies
             running_proxies.remove(uri)
             out_cnt = out_cnt + 1
         if out_cnt > 0:
             logger.info(f'完成了{out_cnt}个代理的验证')
 
         # 如果正在进行验证的代理足够多，那么就不着急添加新代理        
-        if len(running_proxies) >= VALIDATE_THREAD_NUM:
+        if len(running_proxies) >= VALIDATE_THREAD_NUM * 2:
             time.sleep(PROC_VALIDATOR_SLEEP)
             continue
 
         # 找一些新的待验证的代理放入队列中
         added_cnt = 0
-        for proxy in conn.getToValidate(VALIDATE_THREAD_NUM):
+        for proxy in conn.getToValidate(VALIDATE_THREAD_NUM * 4):
             uri = f'{proxy.protocol}://{proxy.ip}:{proxy.port}'
             # 这里找出的代理有可能是正在进行验证的代理，要避免重复加入
             if uri not in running_proxies:
@@ -86,7 +86,7 @@ def validate_once(proxy):
             return True
         return False
     else:
-        r = requests.head(VALIDATE_URL, timeout=VALIDATE_TIMEOUT, proxies=proxies)
+        r = requests.get(VALIDATE_URL, timeout=VALIDATE_TIMEOUT, proxies=proxies, allow_redirects=False)
         resp_headers = r.headers
         if VALIDATE_HEADER in resp_headers.keys() and VALIDATE_KEYWORD in resp_headers[VALIDATE_HEADER]:
             return True

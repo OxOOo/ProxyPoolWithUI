@@ -99,7 +99,7 @@ class Proxy(object):
             self.validated = True
             self.validate_date = datetime.datetime.now()
             self.validate_failed_cnt = 0
-            self.to_validate_date = datetime.datetime.now() + datetime.timedelta(minutes=5) # 5分钟之后继续验证
+            self.to_validate_date = datetime.datetime.now() + datetime.timedelta(minutes=10)  # 10分钟之后继续验证
             return False
         else:
             self.validated = False
@@ -107,10 +107,10 @@ class Proxy(object):
             self.validate_failed_cnt = self.validate_failed_cnt + 1
 
             # 验证失败的次数越多，距离下次验证的时间越长
-            delay_minutes = self.validate_failed_cnt * 5
+            delay_minutes = self.validate_failed_cnt * 10
             self.to_validate_date = datetime.datetime.now() + datetime.timedelta(minutes=delay_minutes)
 
-            if self.validate_failed_cnt >= 3:
+            if self.validate_failed_cnt >= 6:
                 return True
             else:
                 return False

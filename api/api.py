@@ -1,8 +1,12 @@
 # encoding: utf-8
 
 import os
+import logging
 from flask import Flask
 from flask import jsonify, request, redirect, send_from_directory
+
+log = logging.getLogger('werkzeug')
+log.disabled = True
 
 try:
     from db import conn
@@ -123,9 +127,11 @@ def after_request(resp):
     return resp
 app.after_request(after_request)
 
-def main():
+def main(proc_lock):
+    if proc_lock is not None:
+        conn.set_proc_lock(proc_lock)
     # 因为默认sqlite3中，同一个数据库连接不能在多线程环境下使用，所以这里需要禁用flask的多线程
     app.run(host='0.0.0.0', port=5000, threaded=False)
 
 if __name__ == '__main__':
-    main()
+    main(None)

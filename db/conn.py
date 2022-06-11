@@ -9,9 +9,21 @@ from .Proxy import Proxy
 from .Fetcher import Fetcher
 import sqlite3
 import datetime
-import time
+import threading
 
 conn = sqlite3.connect(DATABASE_PATH, detect_types=sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES)
+# 线程锁
+conn_lock = threading.Lock()
+# 进程锁
+proc_lock = None
+
+def set_proc_lock(proc_lock_sub):
+    """
+    设置进程锁
+    proc_lock_sub : main中的进程锁
+    """
+    global proc_lock
+    proc_lock = proc_lock_sub
 
 def pushNewFetch(fetcher_name, protocol, ip, port):
     """
@@ -21,13 +33,13 @@ def pushNewFetch(fetcher_name, protocol, ip, port):
     ip : 代理IP地址
     port : 代理端口
     """
-    time.sleep(0.1) # 为了解决并发读写饿死的问题
-
     p = Proxy()
     p.fetcher_name = fetcher_name
     p.protocol = protocol
     p.ip = ip
     p.port = port
+    conn_lock.acquire()
+    proc_lock.acquire()
 
     c = conn.cursor()
     c.execute('BEGIN EXCLUSIVE TRANSACTION;')
@@ -43,6 +55,8 @@ def pushNewFetch(fetcher_name, protocol, ip, port):
         c.execute('INSERT INTO proxies VALUES (?,?,?,?,?,?,?,?,?)', p.params())
     c.close()
     conn.commit()
+    conn_lock.release()
+    proc_lock.release()
 
 def getToValidate(max_count=1):
     """
@@ -51,6 +65,8 @@ def getToValidate(max_count=1):
     max_count : 返回数量限制
     返回 : list[Proxy]
     """
+    conn_lock.acquire()
+    proc_lock.acquire()
     c = conn.cursor()
     c.execute('BEGIN EXCLUSIVE TRANSACTION;')
     c.execute('SELECT * FROM proxies WHERE to_validate_date<=? AND validated=? ORDER BY to_validate_date LIMIT ?', (
@@ -67,6 +83,8 @@ def getToValidate(max_count=1):
     proxies = proxies + [Proxy.decode(row) for row in c]
     c.close()
     conn.commit()
+    conn_lock.release()
+    proc_lock.release()
     return proxies
 
 def pushValidateResult(proxy, success, latency):
@@ -76,10 +94,10 @@ def pushValidateResult(proxy, success, latency):
     success : True/False，验证是否成功
     latency : 本次验证所用的时间(单位毫秒)
     """
-    time.sleep(0.01) # 为了解决并发读写饿死的问题
-
     p = proxy
     should_remove = p.validate(success, latency)
+    conn_lock.acquire()
+    proc_lock.acquire()
     if should_remove:
         conn.execute('DELETE FROM proxies WHERE protocol=? AND ip=? AND port=?', (p.protocol, p.ip, p.port))
     else:
@@ -92,6 +110,8 @@ def pushValidateResult(proxy, success, latency):
             p.protocol, p.ip, p.port
         ))
     conn.commit()
+    conn_lock.release()
+    proc_lock.release()
 
 def getValidatedRandom(max_count):
     """
@@ -99,12 +119,16 @@ def getValidatedRandom(max_count):
     max_count<=0表示不做数量限制
     返回 : list[Proxy]
     """
+    conn_lock.acquire()
+    proc_lock.acquire()
     if max_count > 0:
         r = conn.execute('SELECT * FROM proxies WHERE validated=? ORDER BY RANDOM() LIMIT ?', (True, max_count))
     else:
         r = conn.execute('SELECT * FROM proxies WHERE validated=? ORDER BY RANDOM()', (True,))
     proxies = [Proxy.decode(row) for row in r]
     r.close()
+    conn_lock.release()
+    proc_lock.release()
     return proxies
 
 def pushFetcherResult(name, proxies_cnt):
@@ -113,8 +137,8 @@ def pushFetcherResult(name, proxies_cnt):
     name : 爬取器的名称
     proxies_cnt : 本次爬取到的代理数量
     """
-    time.sleep(0.1) # 为了解决并发读写饿死的问题
-
+    conn_lock.acquire()
+    proc_lock.acquire()
     c = conn.cursor()
     c.execute('BEGIN EXCLUSIVE TRANSACTION;')
     c.execute('SELECT * FROM fetchers WHERE name=?', (name,))
@@ -131,6 +155,8 @@ def pushFetcherResult(name, proxies_cnt):
         ))
     c.close()
     conn.commit()
+    conn_lock.release()
+    proc_lock.release()
 
 def pushFetcherEnable(name, enable):
     """
@@ -138,6 +164,8 @@ def pushFetcherEnable(name, enable):
     name : 爬取器的名称
     enable : True/False, 是否启用
     """
+    conn_lock.acquire()
+    proc_lock.acquire()
     c = conn.cursor()
     c.execute('BEGIN EXCLUSIVE TRANSACTION;')
     c.execute('SELECT * FROM fetchers WHERE name=?', (name,))
@@ -152,15 +180,21 @@ def pushFetcherEnable(name, enable):
         ))
     c.close()
     conn.commit()
+    conn_lock.release()
+    proc_lock.release()
 
 def getAllFetchers():
     """
     获取所有的爬取器以及状态
     返回 : list[Fetcher]
     """
+    conn_lock.acquire()
+    proc_lock.acquire()
     r = conn.execute('SELECT * FROM fetchers')
     fetchers = [Fetcher.decode(row) for row in r]
     r.close()
+    conn_lock.release()
+    proc_lock.release()
     return fetchers
 
 def getFetcher(name):
@@ -168,9 +202,13 @@ def getFetcher(name):
     获取指定爬取器以及状态
     返回 : Fetcher
     """
+    conn_lock.acquire()
+    proc_lock.acquire()
     r = conn.execute('SELECT * FROM fetchers WHERE name=?', (name,))
     row = r.fetchone()
     r.close()
+    conn_lock.release()
+    proc_lock.release()
     if row is None:
         return None
     else:
@@ -182,9 +220,13 @@ def getProxyCount(fetcher_name):
     fetcher_name : 爬取器名称
     返回 : int
     """
+    conn_lock.acquire()
+    proc_lock.acquire()
     r = conn.execute('SELECT count(*) FROM proxies WHERE fetcher_name=?', (fetcher_name,))
     cnt = r.fetchone()[0]
     r.close()
+    conn_lock.release()
+    proc_lock.release()
     return cnt
 
 def getProxiesStatus():
@@ -192,6 +234,8 @@ def getProxiesStatus():
     获取代理状态，包括`全部代理数量`，`当前可用代理数量`，`等待验证代理数量`
     返回 : dict
     """
+    conn_lock.acquire()
+    proc_lock.acquire()
     r = conn.execute('SELECT count(*) FROM proxies')
     sum_proxies_cnt = r.fetchone()[0]
     r.close()
@@ -203,7 +247,8 @@ def getProxiesStatus():
     r = conn.execute('SELECT count(*) FROM proxies WHERE to_validate_date<=?', (datetime.datetime.now(),))
     pending_proxies_cnt = r.fetchone()[0]
     r.close()
-
+    conn_lock.release()
+    proc_lock.release()
     return dict(
         sum_proxies_cnt=sum_proxies_cnt,
         validated_proxies_cnt=validated_proxies_cnt,
@@ -214,8 +259,12 @@ def pushClearFetchersStatus():
     """
     清空爬取器的统计信息，包括sum_proxies_cnt,last_proxies_cnt,last_fetch_date
     """
+    conn_lock.acquire()
+    proc_lock.acquire()
     c = conn.cursor()
     c.execute('BEGIN EXCLUSIVE TRANSACTION;')
     c.execute('UPDATE fetchers SET sum_proxies_cnt=?, last_proxies_cnt=?, last_fetch_date=?', (0, 0, None))
     c.close()
     conn.commit()
+    conn_lock.release()
+    proc_lock.release()
