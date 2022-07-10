@@ -11,10 +11,12 @@ import time
 from db import conn
 from fetchers import fetchers
 from config import PROC_FETCHER_SLEEP
+from func_timeout import func_set_timeout
+from func_timeout.exceptions import FunctionTimedOut
 
 logging.basicConfig(stream=sys.stdout, format="%(asctime)s-%(levelname)s:%(name)s:%(message)s", level='INFO')
 
-def main():
+def main(proc_lock):
     """
     定时运行爬取器
     主要逻辑：
@@ -27,6 +29,8 @@ def main():
         睡眠一段时间
     """
     logger = logging.getLogger('fetcher')
+    conn.set_proc_lock(proc_lock)
+
     while True:
         logger.info('开始运行一轮爬取器')
         status = conn.getProxiesStatus()
@@ -35,6 +39,12 @@ def main():
             time.sleep(PROC_FETCHER_SLEEP)
             continue
 
+        @func_set_timeout(30)
+        def fetch_worker(fetcher):
+            f = fetcher()
+            proxies = f.fetch()
+            return proxies
+
         def run_thread(name, fetcher, que):
             """
             name: 爬取器名称
@@ -42,12 +52,14 @@ def main():
             que: 队列，用于返回数据
             """
             try:
-                f = fetcher()
-                proxies = f.fetch()
+                proxies = fetch_worker(fetcher)
                 que.put((name, proxies))
             except Exception as e:
                 logger.error(f'运行爬取器{name}出错：' + str(e))
                 que.put((name, []))
+            except FunctionTimedOut:
+                pass
+
         threads = []
         que = Queue()
         for item in fetchers:
@@ -61,8 +73,7 @@ def main():
             threads.append(threading.Thread(target=run_thread, args=(item.name, item.fetcher, que)))
         [t.start() for t in threads]
         [t.join() for t in threads]
-        for _ in range(len(threads)):
-            assert not que.empty()
+        while not que.empty():
             fetcher_name, proxies = que.get()
             for proxy in proxies:
                 conn.pushNewFetch(fetcher_name, proxy[0], proxy[1], proxy[2])

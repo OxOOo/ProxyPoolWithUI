@@ -6,6 +6,10 @@ from multiprocessing import Process
 import time
 from proc import run_fetcher, run_validator
 from api import api
+import multiprocessing
+
+# 进程锁
+proc_lock = multiprocessing.Lock()
 
 class Item:
     def __init__(self, target, name):
@@ -23,7 +27,7 @@ def main():
     while True:
         for p in processes:
             if p.process is None:
-                p.process = Process(target=p.target, name=p.name, daemon=False)
+                p.process = Process(target=p.target, name=p.name, daemon=False, args=(proc_lock, ))
                 p.process.start()
                 print(f'启动{p.name}进程，pid={p.process.pid}')
                 p.start_time = time.time()
@@ -56,7 +60,7 @@ def citest():
         p.process.start()
         print(f'running {p.name}, pid={p.process.pid}')
         p.start_time = time.time()
-    
+
     time.sleep(10)
 
     for p in processes:

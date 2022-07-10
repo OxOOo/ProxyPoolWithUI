@@ -92,8 +92,10 @@ docker build --tag proxy_pool .
 3. 运行镜像
 
 ```bash
-docker run -p 5000:5000 -d proxy_pool
+docker run -p 5000:5000 -v /root/ProxyPoolWithUI:/proxy -d proxy_pool
 ```
+`/root/ProxyPoolWithUI`为clone下来的项目目录路径，请自行更改
+
 
 ## 使用代理
 
