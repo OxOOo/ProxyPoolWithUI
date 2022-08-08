@@ -38,10 +38,20 @@ def main():
                     print(f'进程{p.name}异常退出, exitcode={p.process.exitcode}')
                     p.process.terminate()
                     p.process = None
+                    # 解除进程锁
+                    try:
+                        proc_lock.release()
+                    except ValueError:
+                        pass
                 elif p.start_time + 60 * 60 < time.time(): # 最长运行1小时就重启
                     print(f'进程{p.name}运行太久，重启')
                     p.process.terminate()
                     p.process = None
+                    # 解除进程锁
+                    try:
+                        proc_lock.release()
+                    except ValueError:
+                        pass
 
         time.sleep(0.2)
 
