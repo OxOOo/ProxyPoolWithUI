@@ -40,6 +40,110 @@ def fetch_random():
     else:
         return ''
 
+############# 新增加接口int ################        
+
+#api 获取协议为http的一条结果
+@app.route('/fetch_http', methods=['GET'])
+def fetch_http():
+    proxies =conn.get_by_protocol('http', 1)
+    if len(proxies) > 0:
+        p = proxies[0]
+        return f'{p.protocol}://{p.ip}:{p.port}'
+    else:
+        return ''
+
+#api 获取协议为http的全部结果
+@app.route('/fetch_http_all', methods=['GET'])
+def fetch_http_all():
+    proxies = conn.get_by_protocol('http', -1)
+    if len(proxies) == 1:
+        p = proxies[0]
+        return f'{p.protocol}://{p.ip}:{p.port}'
+    elif len(proxies) > 1:
+        proxy_list = []
+        for p in proxies:
+            proxy_list.append(f'{p.protocol}://{p.ip}:{p.port}')
+        return ','.join(proxy_list)
+    else:
+        return ''
+        
+#api 获取协议为https的一条结果
+@app.route('/fetch_https', methods=['GET'])
+def fetch_https():
+    proxies =conn.get_by_protocol('https', 1)
+    if len(proxies) > 0:
+        p = proxies[0]
+        return f'{p.protocol}://{p.ip}:{p.port}'
+    else:
+        return ''
+
+#api 获取协议为https的全部结果
+@app.route('/fetch_https_all', methods=['GET'])
+def fetch_https_all():
+    proxies = conn.get_by_protocol('https', -1)
+    if len(proxies) == 1:
+        p = proxies[0]
+        return f'{p.protocol}://{p.ip}:{p.port}'
+    elif len(proxies) > 1:
+        proxy_list = []
+        for p in proxies:
+            proxy_list.append(f'{p.protocol}://{p.ip}:{p.port}')
+        return ','.join(proxy_list)
+    else:
+        return ''
+                
+#api 获取协议为http的一条结果
+@app.route('/fetch_socks4', methods=['GET'])
+def fetch_socks4():
+    proxies =conn.get_by_protocol('socks4', 1)
+    if len(proxies) > 0:
+        p = proxies[0]
+        return f'{p.protocol}://{p.ip}:{p.port}'
+    else:
+        return ''
+
+#api 获取协议为http的全部结果
+@app.route('/fetch_socks4_all', methods=['GET'])
+def fetch_socks4_all():
+    proxies = conn.get_by_protocol('socks4', -1)
+    if len(proxies) == 1:
+        p = proxies[0]
+        return f'{p.protocol}://{p.ip}:{p.port}'
+    elif len(proxies) > 1:
+        proxy_list = []
+        for p in proxies:
+            proxy_list.append(f'{p.protocol}://{p.ip}:{p.port}')
+        return ','.join(proxy_list)
+    else:
+        return ''
+        
+#api 获取协议为https的一条结果
+@app.route('/fetch_socks5', methods=['GET'])
+def fetch_socks5():
+    proxies =conn.get_by_protocol('socks5', 1)
+    if len(proxies) > 0:
+        p = proxies[0]
+        return f'{p.protocol}://{p.ip}:{p.port}'
+    else:
+        return ''
+
+#api 获取协议为https的全部结果
+@app.route('/fetch_socks5_all', methods=['GET'])
+def fetch_socks5_all():
+    proxies = conn.get_by_protocol('socks5', -1)
+    if len(proxies) == 1:
+        p = proxies[0]
+        return f'{p.protocol}://{p.ip}:{p.port}'
+    elif len(proxies) > 1:
+        proxy_list = []
+        for p in proxies:
+            proxy_list.append(f'{p.protocol}://{p.ip}:{p.port}')
+        return ','.join(proxy_list)
+    else:
+        return ''
+                        
+############# 新增加接口end ################    
+
 # 获取所有可用代理，如果没有可用代理则返回空白
 @app.route('/fetch_all', methods=['GET'])
 def fetch_all():
