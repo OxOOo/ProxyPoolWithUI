@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 import datetime
-
+import random
 class Proxy(object):
     """
     代理，用于表示数据库中的一个记录
@@ -99,7 +99,8 @@ class Proxy(object):
             self.validated = True
             self.validate_date = datetime.datetime.now()
             self.validate_failed_cnt = 0
-            self.to_validate_date = datetime.datetime.now() + datetime.timedelta(minutes=10)  # 10分钟之后继续验证
+            #self.to_validate_date = datetime.datetime.now() + datetime.timedelta(minutes=30)  # 30分钟之后继续验证
+            self.to_validate_date = datetime.datetime.now() + datetime.timedelta(minutes=random.randint(10, 60))  # 10·60分钟之后继续验证
             return False
         else:
             self.validated = False
