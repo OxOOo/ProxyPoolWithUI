@@ -130,6 +130,25 @@ def getValidatedRandom(max_count):
     conn_lock.release()
     proc_lock.release()
     return proxies
+    
+    #新增方法
+def get_by_protocol(protocol, max_count):
+    """
+    查询 protocol 字段为指定值的代理服务器记录
+    max_count 表示返回记录的最大数量，如果为 0 或负数则返回所有记录
+    返回 : list[Proxy]
+    """
+    conn_lock.acquire()
+    proc_lock.acquire()
+    if max_count > 0:
+        r = conn.execute('SELECT * FROM proxies WHERE protocol=? AND validated=? ORDER BY RANDOM() LIMIT ?', (protocol, True, max_count))
+    else:
+        r = conn.execute('SELECT * FROM proxies WHERE protocol=? AND validated=? ORDER BY RANDOM()', (protocol, True))
+    proxies = [Proxy.decode(row) for row in r]
+    r.close()
+    conn_lock.release()
+    proc_lock.release()
+    return proxies
 
 def pushFetcherResult(name, proxies_cnt):
     """
